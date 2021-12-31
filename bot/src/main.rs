@@ -31,7 +31,7 @@ fn main() -> Result<()> {
         ::std::fs::write(&gdb_cmds_path, format!("b {}:{}\nr", file, line))?;
 
         // run gdb
-        ::std::process::Command::new("gdb")
+        ::std::process::Command::new("rust-gdb")
             .args(&["-x", &gdb_cmds_path.display().to_string()])
             .arg(exe)
             .spawn()?
