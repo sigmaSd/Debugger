@@ -1,19 +1,29 @@
+use scolor::ColorExt;
+
 type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
 
 fn main() -> Result<()> {
     loop {
         // Wait for ok
-        println!("Press Ok when ready");
+        println!("{}", "Press Ok when ready".light_blue().italic());
         std::io::stdin().read_line(&mut String::new())?;
 
         // Build the target crate
-        std::process::Command::new("cargo")
+        println!("{}", "Building the target crate.".green().italic());
+        let status = std::process::Command::new("cargo")
             .arg("+nightly")
             .arg("b")
             .spawn()?
             .wait()?;
 
+        if !status.success() {
+            println!("{}", "Compiling failed".yellow().italic());
+            println!();
+            continue;
+        }
+
         // Read instructions
+        println!("{}", "Reading Bot instructions.".green().italic());
         let contents = std::fs::read_to_string(std::env::temp_dir().join("/tmp/bot_stdin"))?;
         let mut contents = contents.lines();
         let file = contents.next().ok_or("Missing file")?;
@@ -27,14 +37,17 @@ fn main() -> Result<()> {
         };
 
         // gdb cmds
+        println!("{}", "Writing gdb commands.".green().italic());
         let gdb_cmds_path = ::std::path::Path::new("/tmp/gdb_bot");
         ::std::fs::write(&gdb_cmds_path, format!("b {}:{}\nr", file, line))?;
 
         // run gdb
+        println!("{}", "Spawning gdb.".green().italic());
         ::std::process::Command::new("rust-gdb")
             .args(&["-x", &gdb_cmds_path.display().to_string()])
             .arg(exe)
             .spawn()?
             .wait()?;
+        println!();
     }
 }

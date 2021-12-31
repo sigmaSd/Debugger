@@ -5,7 +5,16 @@ version = 3
 [[package]]
 name = "dbg-bot"
 version = "0.1.0"
+dependencies = [
+ "scolor",
+]
 
 [[package]]
 name = "dbg-macro"
 version = "0.1.0"
+
+[[package]]
+name = "scolor"
+version = "8.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fd8e5ac43f4c4da04a07a4f4dfb98d6c987a47147aa9177e36cd581b5914bbac"
